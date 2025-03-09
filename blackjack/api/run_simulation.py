@@ -66,7 +66,7 @@ def main():
     simulator = BlackjackSimulator(player, initial_bankroll=10000.0, bet_size=100.0)
     starting_bankroll = simulator.bankroll
 
-    # Run 100 rounds with verbose output for the first 3 rounds
+    # Run 10000 rounds with verbose output for the first 3 rounds
     for i in range(10000):
         simulator.run_round(verbose=(i < 3))
 
