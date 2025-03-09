@@ -29,9 +29,7 @@ class Hand:
 
     @property
     def can_double(self) -> bool:
-        """A hand can double if it has two cards of the same value.
-        Note that there is
-        """
+        """A hand can double if it has only two cards"""
         return (
             len(self.cards) == 2
             and self.cards[0].value == self.cards[1].value

@@ -34,6 +34,45 @@ def test_hand_is_bust(test_case, cards, is_bust):
 
 
 @pytest.mark.parametrize(
+    "test_case, cards, is_blackjack",
+    [
+        (
+            "ace 10 is blackjack",
+            [1, 10],
+            True,
+        ),
+        ("ace J is blackjack", [1, 11], True),
+        ("2 cards not total 21 is not blackjack", [5, 10], False),
+        (
+            "3 cards total 21 is not blackjack",
+            [12, 10, 1],
+            False,
+        ),
+        (
+            "3 cards total 21 is not blackjack",
+            [5, 10, 6],
+            False,
+        ),
+    ],
+)
+def test_hand_is_blackjack(test_case, cards, is_blackjack):
+    hand = Hand([Card(suit=Suit.HEARTS, value=c) for c in cards], 0)
+    assert hand.is_blackjack == is_blackjack, test_case
+
+
+@pytest.mark.parametrize(
+    "test_case, cards, can_split",
+    [
+        ("2 cards of same value can split", [1, 1], True),
+        ("2 cards of different values cannot split", [1, 2], False),
+    ],
+)
+def test_hand_can_split(test_case, cards, can_split):
+    hand = Hand([Card(suit=Suit.HEARTS, value=c) for c in cards], 0)
+    assert hand.can_split == can_split, test_case
+
+
+@pytest.mark.parametrize(
     "test_case, cards, expected_values",
     [
         (
