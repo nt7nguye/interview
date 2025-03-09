@@ -88,6 +88,19 @@ def test_hand_can_hit(test_case, cards, can_hit):
 
 
 @pytest.mark.parametrize(
+    "test_case, cards, can_double",
+    [
+        ("can double on 2 cards", [5, 10], True),
+        ("cant double on 3 cards", [1, 10, 10], False),
+        ("cant double on blackjack", [1, 10], False),
+    ],
+)
+def test_hand_can_double(test_case, cards, can_double):
+    hand = Hand([Card(suit=Suit.HEARTS, value=c) for c in cards], 0)
+    assert hand.can_double == can_double, test_case
+
+
+@pytest.mark.parametrize(
     "test_case, cards, expected_values",
     [
         (
