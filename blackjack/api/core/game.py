@@ -109,7 +109,7 @@ class BlackjackGame:
             possible_actions.append(Action.HIT)
         if current_hand.can_double:
             possible_actions.append(Action.DOUBLE)
-        if current_hand.can_split:
+        if current_hand.can_split and len(self.player_hands) <= 3:
             possible_actions.append(Action.SPLIT)
 
         return possible_actions
