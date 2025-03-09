@@ -7,15 +7,15 @@ class Player:
     """Abstract base class for a blackjack player"""
 
     @abstractmethod
-    def place_bets(self, state: GameState) -> List[float]:
+    def get_bet_size(self, state: GameState) -> float:
         """
-        At the start of each round, the player must place bets on each hand.
+        Determine the amount of money to bet before the round starts.
 
         Args:
             state (GameState): The current game state
 
         Returns:
-            A list of float, each representing the amount of money wagered on a hand.
+            float: The amount of money to bet
         """
         raise NotImplementedError("Your strategy must implement this method")
 
