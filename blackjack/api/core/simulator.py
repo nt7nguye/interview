@@ -1,6 +1,5 @@
 from typing import List
-from .game import BlackjackGame, Action
-from .player import RandomPlayer
+from .game import BlackjackGame
 
 
 class BlackjackSimulator:
@@ -46,61 +45,14 @@ class BlackjackSimulator:
         if verbose:
             # Show each player hand with its value
             for i, hand in enumerate(self.game.player_hands):
-                print(f"Player hand {i+1}: {[str(card) for card in hand.cards]} (Value: {hand.best_value})")
-            print(f"Dealer's final hand: {[str(card) for card in self.game.dealer_hand.cards]} (Value: {self.game.dealer_hand.best_value})")
+                print(
+                    f"Player hand {i + 1}: {[str(card) for card in hand.cards]} (Value: {hand.best_value})"
+                )
+            print(
+                f"Dealer's final hand: {[str(card) for card in self.game.dealer_hand.cards]} (Value: {self.game.dealer_hand.best_value})"
+            )
             print(f"Round payouts: {payouts}")
             print(f"Total payout: ${total_payout:.2f}")
             print(f"Current bankroll: ${self.bankroll:.2f}")
 
         return payouts
-
-    def run_simulation(self, num_rounds: int, verbose: bool = False) -> dict:
-        """Run multiple rounds and return statistics"""
-        starting_bankroll = self.bankroll
-
-        for _ in range(num_rounds):
-            self.run_round(verbose=verbose)
-
-        results = {
-            "rounds_played": self.rounds_played,
-            "total_won": self.total_won,
-            "ending_bankroll": self.bankroll,
-            "return_percentage": (
-                (self.bankroll - starting_bankroll) / (self.bet_size * num_rounds) * 100
-            ),
-            "average_return_per_round": self.total_won / num_rounds,
-        }
-
-        if verbose:
-            print("\nSimulation Results:")
-            print(f"Rounds played: {results['rounds_played']}")
-            print(f"Total won: ${results['total_won']:.2f}")
-            print(f"Final bankroll: ${results['ending_bankroll']:.2f}")
-            print(f"Return percentage: {results['return_percentage']:.1f}%")
-            print(
-                f"Average return per round: ${results['average_return_per_round']:.2f}"
-            )
-
-        return results
-
-
-def main():
-    """Example usage of the simulator"""
-    player = RandomPlayer()
-    simulator = BlackjackSimulator(player)
-
-    # Run 100 rounds with verbose output for the first 3 rounds
-    for i in range(100):
-        simulator.run_round(verbose=(i < 3))
-
-    print("\nFinal Results:")
-    print(f"Total rounds played: {simulator.rounds_played}")
-    print(f"Final bankroll: ${simulator.bankroll:.2f}")
-    print(f"Total won: ${simulator.total_won:.2f}")
-    print(
-        f"Average return per round: ${simulator.total_won / simulator.rounds_played:.2f}"
-    )
-
-
-if __name__ == "__main__":
-    main()
