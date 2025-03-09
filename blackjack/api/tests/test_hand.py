@@ -105,3 +105,17 @@ def test_hand_can_split(test_case, cards, can_split):
 def test_hand_possible_values(test_case, cards, expected_values):
     hand = Hand([Card(suit=Suit.HEARTS, value=c) for c in cards], 0)
     assert hand.possible_values == expected_values, test_case
+
+
+@pytest.mark.parametrize(
+    "cards, expected_print",
+    [
+        ([2, 10], "2, 10 [12]"),
+        ([1, 10], "A, 10 [11, 21]"),
+        ([1, 1, 8], "A, A, 8 [10, 20, 30]"),
+        ([1, 1, 1, 10], "A, A, A, 10 [13, 23, 33, 43]"),
+    ],
+)
+def test_hand_print(cards, expected_print):
+    hand = Hand([Card(suit=Suit.HEARTS, value=c) for c in cards], 0)
+    assert str(hand) == expected_print, expected_print

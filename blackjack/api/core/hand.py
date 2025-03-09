@@ -58,3 +58,19 @@ class Hand:
         values = self.possible_values
         non_bust = [v for v in values if v <= 21]
         return max(non_bust) if non_bust else min(values)
+
+    def __str__(self) -> str:
+        special_cards = {1: "A", 11: "J", 12: "Q", 13: "K"}
+        return (
+            ", ".join(
+                [
+                    str(
+                        card.value
+                        if card.value not in special_cards
+                        else special_cards[card.value]
+                    )
+                    for card in self.cards
+                ]
+            )
+            + f" {self.possible_values}"
+        )
