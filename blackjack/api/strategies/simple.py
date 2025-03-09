@@ -4,7 +4,7 @@ from core import Action, Strategy, PlayerInformation
 
 
 class SimpleStrategy(Strategy):
-    """A strategy that follows basic blackjack strategy rules"""
+    """ChatGPT's basic strategy"""
 
     def get_bet_size(self, info: PlayerInformation, bankroll: float) -> float:
         # Simple constant bet size - 5% of bankroll with minimum of 10

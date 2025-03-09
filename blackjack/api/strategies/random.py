@@ -7,7 +7,7 @@ class RandomStrategy(Strategy):
     """A simple player that takes random valid actions"""
 
     def get_bet_size(self, info: PlayerInformation, bankroll: float) -> float:
-        return random.uniform(1, 100)
+        return 1.0
 
     def get_action(
         self, info: PlayerInformation, possible_actions: List[Action], bankroll: float

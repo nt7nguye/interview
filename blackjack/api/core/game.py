@@ -171,6 +171,9 @@ class BlackjackGame:
 
     def get_player_payout(self) -> float:
         """Calculate how much player gets back at the end of the round"""
+        if self.dealer_hand.is_blackjack:
+            return 0
+
         dealer_value = self.dealer_hand.best_value
         dealer_bust = self.dealer_hand.is_bust
 
@@ -179,6 +182,8 @@ class BlackjackGame:
         for hand in self.player_hands:
             if hand.is_bust:
                 continue
+            elif hand.is_blackjack:
+                payout += hand.bet_amount * 2.5
             elif dealer_bust:
                 payout += hand.bet_amount * 2
             else:

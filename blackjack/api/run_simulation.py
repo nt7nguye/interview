@@ -63,7 +63,7 @@ def main():
 
     print(f"Starting simulation with {strategy_name} strategy...")
     player = load_player_strategy(strategy_name)
-    simulator = BlackjackSimulator(player)
+    simulator = BlackjackSimulator(player, initial_bankroll=10000.0, bet_size=100.0)
     starting_bankroll = simulator.bankroll
 
     # Run 100 rounds with verbose output for the first 3 rounds
