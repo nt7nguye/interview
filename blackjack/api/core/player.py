@@ -1,20 +1,38 @@
-import random
+from abc import abstractmethod
+from typing import List
 from core.game import GameState, Action
 
 
-class RandomPlayer:
-    """A simple player that takes random valid actions"""
+class Player:
+    """Abstract base class for a blackjack player"""
 
-    def get_action(self, state: GameState) -> Action:
+    @abstractmethod
+    def place_bets(self, state: GameState) -> List[float]:
         """
-        Determine the next action based on the current game state.
-        Takes random actions from the set of valid actions.
+        At the start of each round, the player must place bets on each hand.
+
+        Args:
+            state (GameState): The current game state
+
+        Returns:
+            A list of float, each representing the amount of money wagered on a hand.
         """
-        valid_actions = [Action.HIT, Action.STAND]
+        raise NotImplementedError("Your strategy must implement this method")
 
-        if state.can_double:
-            valid_actions.append(Action.DOUBLE)
-        if state.can_split:
-            valid_actions.append(Action.SPLIT)
+    @abstractmethod
+    def get_action(
+        self,
+        state: GameState,
+        hand_index: int,
+    ) -> Action:
+        """
+        Determine the next action for a given hand.
 
-        return random.choice(valid_actions)
+        Args:
+            state (GameState): The current game state
+            hand_index (int): The index of the hand to take an action on
+
+        Returns:
+            Action: The next action to take
+        """
+        raise NotImplementedError("Your strategy must implement this method")
