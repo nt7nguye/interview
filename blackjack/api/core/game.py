@@ -16,6 +16,7 @@ class Action(Enum):
 @dataclass
 class GameState:
     """Represents the visible state of the game to a player"""
+
     player_hands: List[List[Card]]  # Multiple hands in case of splits
     dealer_up_card: Optional[Card]
     current_hand_index: int
@@ -25,14 +26,24 @@ class GameState:
 
 class BlackjackGame:
     def __init__(self, num_decks: int = 6):
+        self.num_decks = num_decks  # Store number of decks for reshuffling
         self.deck = Deck(num_decks)
         self.player_hands: List[Hand] = []
         self.dealer_hand: Hand = Hand([])
         self.current_hand_index: int = 0
         self.bet_amount: int = 0
 
+    def _ensure_cards_available(self, num_cards_needed: int = 1):
+        """Ensure there are enough cards available, reshuffle if needed"""
+        if len(self.deck.cards) < num_cards_needed:
+            print(f"Reshuffling deck. Cards remaining: {len(self.deck.cards)}")
+            self.deck = Deck(self.num_decks)  # Create fresh shuffled deck
+
     def start_round(self, bet: int) -> GameState:
         """Start a new round with the given bet"""
+        # Need 4 cards to start a round (2 for player, 2 for dealer)
+        self._ensure_cards_available(4)
+
         self.bet_amount = bet
         self.player_hands = [Hand([self.deck.draw(), self.deck.draw()])]
         self.dealer_hand = Hand([self.deck.draw(), self.deck.draw()])
@@ -41,6 +52,16 @@ class BlackjackGame:
 
     def _get_game_state(self) -> GameState:
         """Create a GameState object representing current state"""
+        # Check if we've completed all hands
+        if self.current_hand_index >= len(self.player_hands):
+            return GameState(
+                player_hands=[hand.cards for hand in self.player_hands],
+                dealer_up_card=self.dealer_hand.cards[0],
+                current_hand_index=len(self.player_hands) - 1,  # Return last hand index
+                can_split=False,
+                can_double=False,
+            )
+
         current_hand = self.player_hands[self.current_hand_index]
         can_split = (
             len(current_hand.cards) == 2
@@ -60,6 +81,7 @@ class BlackjackGame:
 
     def apply_action(self, action: Action) -> Tuple[GameState, bool]:
         """Apply player action and return (new_state, is_round_complete)"""
+        self._ensure_cards_available()  # Ensure at least one card is available
         current_hand = self.player_hands[self.current_hand_index]
 
         if action == Action.HIT:
@@ -79,6 +101,8 @@ class BlackjackGame:
             return self._next_hand()
 
         elif action == Action.SPLIT:
+            # Need 2 cards for split (1 for each hand)
+            self._ensure_cards_available(2)
             if not self._get_game_state().can_split:
                 raise ValueError("Split not allowed")
             new_hand = Hand([current_hand.cards.pop()])
@@ -91,14 +115,17 @@ class BlackjackGame:
     def _next_hand(self) -> Tuple[GameState, bool]:
         """Move to next hand or finish round if all hands complete"""
         self.current_hand_index += 1
-        if self.current_hand_index >= len(self.player_hands):
+        is_round_complete = self.current_hand_index >= len(self.player_hands)
+
+        if is_round_complete:
             self._play_dealer()
-            return self._get_game_state(), True
-        return self._get_game_state(), False
+
+        return self._get_game_state(), is_round_complete
 
     def _play_dealer(self):
         """Play out dealer's hand according to rules"""
         while self.dealer_hand.best_value < 17:
+            self._ensure_cards_available()  # Add this check
             self.dealer_hand.cards.append(self.deck.draw())
 
     def get_payouts(self) -> List[float]:
@@ -124,4 +151,4 @@ class BlackjackGame:
             if hand.doubled:
                 payouts[-1] *= 2
 
-        return payouts 
+        return payouts

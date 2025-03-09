@@ -1,6 +1,6 @@
 from typing import List
-from core.game import BlackjackGame
-from core.player import RandomPlayer
+from .game import BlackjackGame, Action
+from .player import RandomPlayer
 
 
 class BlackjackSimulator:
