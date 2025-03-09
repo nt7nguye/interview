@@ -2,6 +2,7 @@ from core import RandomPlayer, BlackjackSimulator
 
 
 def main():
+    print("Starting simulation...")
     player = RandomPlayer()
     simulator = BlackjackSimulator(player)
 

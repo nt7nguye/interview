@@ -1,6 +1,6 @@
 import random
 from typing import List
-from card import Card, Suit
+from core.card import Card, Suit
 
 
 class Deck:

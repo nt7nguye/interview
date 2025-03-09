@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List, Optional, Tuple
 from dataclasses import dataclass
-from card import Card
-from hand import Hand
-from deck import Deck
+from core.card import Card
+from core.hand import Hand
+from core.deck import Deck
 import random
 
 

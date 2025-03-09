@@ -1,8 +1,8 @@
-from .game import BlackjackGame, GameState, Action
-from .hand import Hand
-from .deck import Deck
-from .player import RandomPlayer
-from .simulator import BlackjackSimulator
+from core.game import BlackjackGame, GameState, Action
+from core.hand import Hand
+from core.deck import Deck
+from core.player import RandomPlayer
+from core.simulator import BlackjackSimulator
 
 __all__ = [
     "BlackjackGame",
@@ -11,4 +11,5 @@ __all__ = [
     "Hand",
     "Deck",
     "RandomPlayer",
+    "BlackjackSimulator",
 ]
