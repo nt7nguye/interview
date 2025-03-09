@@ -19,10 +19,10 @@ class Action(Enum):
 class GameState:
     """Represents all the cards in the game"""
 
-    player_hands: List[List[Card]]
+    player_hands: List[Hand]
     # If the game is in progress, the dealer's hand is only the first card
     # If the game is over, the dealer's hand is complete
-    dealer_hand: List[Card]
+    dealer_hand: Hand
 
 
 @dataclass
@@ -31,6 +31,7 @@ class PlayerInformation:
 
     current_game: GameState
     game_history: List[GameState]
+    current_hand_index: int
 
 
 class BlackjackGame:
@@ -59,23 +60,42 @@ class BlackjackGame:
             # Reset game history
             self.game_history = []
 
-    def _get_game_state(self) -> PlayerInformation:
+    def _get_player_information(
+        self, hide_dealer_card: bool = True
+    ) -> PlayerInformation:
         """Create a GameState object representing current state"""
         return PlayerInformation(
             current_game=GameState(
-                player_hands=[copy.deepcopy(hand.cards) for hand in self.player_hands],
-                dealer_hand=copy.deepcopy(self.dealer_hand.cards),
+                player_hands=[copy.deepcopy(hand) for hand in self.player_hands],
+                dealer_hand=Hand(
+                    cards=[copy.deepcopy(self.dealer_hand.cards[0])], bet_amount=0
+                )
+                if hide_dealer_card
+                else self.dealer_hand,
             ),
             game_history=self.game_history,
+            current_hand_index=self.current_hand_index,
         )
 
     def start_round(self, bet_size: int) -> PlayerInformation:
         """Start a new round with the given bet"""
+        # Add previous round to game history
+        if self.dealer_hand is not None:
+            self.game_history.append(
+                self._get_player_information(hide_dealer_card=True).current_game
+            )
+
+        # Shuffle if needed
         self._shuffle_if_needed()
+
+        # Create new hands
         self.player_hands = [Hand([self.deck.draw(), self.deck.draw()], bet_size)]
         self.dealer_hand = Hand([self.deck.draw(), self.deck.draw()], 0)
+
+        # Reset current hand index
         self.current_hand_index = 0
-        return self._get_game_state()
+
+        return self._get_player_information()
 
     def apply_action(self, action: Action) -> Tuple[PlayerInformation, bool]:
         """Apply player action and return (new_state, is_round_complete)"""
@@ -103,12 +123,12 @@ class BlackjackGame:
                 raise ValueError(f"Cannot split on hand {current_hand}")
             if len(self.player_hands) >= 3:
                 raise ValueError("Can only split 3 times max")
-            new_hand = Hand([current_hand.cards.pop()])
+            new_hand = Hand([current_hand.cards.pop()], current_hand.bet_amount)
             current_hand.cards.append(self.deck.draw())
             new_hand.cards.append(self.deck.draw())
             self.player_hands.insert(self.current_hand_index + 1, new_hand)
 
-        return self._get_game_state(), False
+        return self._get_player_information(), False
 
     def _next_hand(self) -> Tuple[PlayerInformation, bool]:
         """Move to next hand or finish round if all hands complete"""
@@ -118,7 +138,7 @@ class BlackjackGame:
         if is_round_complete:
             self._play_dealer()
 
-        return self._get_game_state(), is_round_complete
+        return self._get_player_information(), is_round_complete
 
     def _play_dealer(self):
         """Play out dealer's hand according to rules"""
@@ -132,7 +152,7 @@ class BlackjackGame:
         ):
             self.dealer_hand.cards.append(self.deck.draw())
 
-    def get_payouts(self) -> List[float]:
+    def get_player_payout(self) -> float:
         """Calculate how much player gets back at the end of the round"""
         dealer_value = self.dealer_hand.best_value
         dealer_bust = self.dealer_hand.is_bust
