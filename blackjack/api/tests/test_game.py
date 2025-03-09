@@ -89,7 +89,7 @@ def test_apply_hit(game):
 
     assert round_complete
     assert game.current_hand_index == 1
-    assert game.get_payouts() == 0
+    assert game.get_player_payout() == 0
 
 
 def test_apply_cant_hit(game):
@@ -145,7 +145,7 @@ def test_apply_double(game):
         Card(suit=Suit.SPADES, value=2),
         Card(suit=Suit.SPADES, value=5),
     ]
-    assert game.get_payouts() == 2 * bet_size
+    assert game.get_player_payout() == 4 * bet_size
 
 
 def test_apply_cant_double(game):
@@ -199,7 +199,7 @@ def test_apply_double_multiple_hands(game):
         Card(suit=Suit.SPADES, value=10),
         Card(suit=Suit.SPADES, value=5),
     ]
-    assert game.get_payouts() == 2 * bet_size
+    assert game.get_player_payout() == 4 * bet_size
 
 
 def test_apply_cant_split(game):

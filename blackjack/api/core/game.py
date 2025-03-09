@@ -180,11 +180,11 @@ class BlackjackGame:
             if hand.is_bust:
                 continue
             elif dealer_bust:
-                payout += hand.bet_amount
+                payout += hand.bet_amount * 2
             else:
                 player_value = hand.best_value
                 if player_value > dealer_value:
-                    payout += hand.bet_amount
+                    payout += hand.bet_amount * 2
                 elif player_value < dealer_value:
                     continue
         return payout
