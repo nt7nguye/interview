@@ -25,7 +25,7 @@ class Hand:
 
     @property
     def can_hit(self) -> bool:
-        return min(self.possible_values) < 21
+        return not self.is_blackjack and min(self.possible_values) < 21
 
     @property
     def can_double(self) -> bool:

@@ -73,6 +73,21 @@ def test_hand_can_split(test_case, cards, can_split):
 
 
 @pytest.mark.parametrize(
+    "test_case, cards, can_hit",
+    [
+        ("less than 21 hard can hit", [10, 7], True),
+        ("less than 21 soft can hit", [1, 10, 7], True),
+        ("cant hit on blackjack", [1, 10], False),
+        ("cant hit on bust", [1, 13, 12], False),
+        ("cant hit on 21", [6, 10, 5], False),
+    ],
+)
+def test_hand_can_hit(test_case, cards, can_hit):
+    hand = Hand([Card(suit=Suit.HEARTS, value=c) for c in cards], 0)
+    assert hand.can_hit == can_hit, test_case
+
+
+@pytest.mark.parametrize(
     "test_case, cards, expected_values",
     [
         (
