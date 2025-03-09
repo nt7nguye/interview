@@ -3,11 +3,11 @@ from typing import List
 from core.game import GameState, Action
 
 
-class Player:
+class Strategy:
     """Abstract base class for a blackjack player"""
 
     @abstractmethod
-    def get_bet_size(self, state: GameState) -> float:
+    def get_bet_size(self, state: GameState, bankroll: float) -> float:
         """
         Determine the amount of money to bet before the round starts.
 
@@ -23,14 +23,16 @@ class Player:
     def get_action(
         self,
         state: GameState,
-        hand_index: int,
+        possible_actions: List[Action],
+        bankroll: float,
     ) -> Action:
         """
         Determine the next action for a given hand.
 
         Args:
             state (GameState): The current game state
-            hand_index (int): The index of the hand to take an action on
+            possible_actions (List[Action]): The list of possible actions
+            bankroll (float): The player's current cash
 
         Returns:
             Action: The next action to take

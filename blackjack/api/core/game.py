@@ -60,15 +60,18 @@ class BlackjackGame:
             # Reset game history
             self.game_history = []
 
-    def _get_player_information(
+    def get_player_information(
         self, hide_dealer_card: bool = True
     ) -> PlayerInformation:
-        """Create a GameState object representing current state"""
+        """Display what the player knows"""
         return PlayerInformation(
             current_game=GameState(
                 player_hands=[copy.deepcopy(hand) for hand in self.player_hands],
                 dealer_hand=Hand(
-                    cards=[copy.deepcopy(self.dealer_hand.cards[0])], bet_amount=0
+                    cards=[copy.deepcopy(self.dealer_hand.cards[0])]
+                    if self.dealer_hand is not None
+                    else [],
+                    bet_amount=0,
                 )
                 if hide_dealer_card
                 else self.dealer_hand,
@@ -82,7 +85,7 @@ class BlackjackGame:
         # Add previous round to game history
         if self.dealer_hand is not None:
             self.game_history.append(
-                self._get_player_information(hide_dealer_card=True).current_game
+                self.get_player_information(hide_dealer_card=True).current_game
             )
 
         # Shuffle if needed
@@ -95,7 +98,21 @@ class BlackjackGame:
         # Reset current hand index
         self.current_hand_index = 0
 
-        return self._get_player_information()
+        return self.get_player_information()
+
+    def get_possible_actions(self) -> List[Action]:
+        """Get the list of possible actions for the current hand"""
+        current_hand = self.player_hands[self.current_hand_index]
+        possible_actions = [Action.STAND]
+
+        if current_hand.can_hit:
+            possible_actions.append(Action.HIT)
+        if current_hand.can_double:
+            possible_actions.append(Action.DOUBLE)
+        if current_hand.can_split:
+            possible_actions.append(Action.SPLIT)
+
+        return possible_actions
 
     def apply_action(self, action: Action) -> Tuple[PlayerInformation, bool]:
         """Apply player action and return (new_state, is_round_complete)"""
@@ -128,7 +145,7 @@ class BlackjackGame:
             new_hand.cards.append(self.deck.draw())
             self.player_hands.insert(self.current_hand_index + 1, new_hand)
 
-        return self._get_player_information(), False
+        return self.get_player_information(), False
 
     def _next_hand(self) -> Tuple[PlayerInformation, bool]:
         """Move to next hand or finish round if all hands complete"""
@@ -138,7 +155,7 @@ class BlackjackGame:
         if is_round_complete:
             self._play_dealer()
 
-        return self._get_player_information(), is_round_complete
+        return self.get_player_information(), is_round_complete
 
     def _play_dealer(self):
         """Play out dealer's hand according to rules"""
