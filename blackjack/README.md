@@ -2,23 +2,24 @@
 
 This is a simple blackjack simulator that evaluates the performance of different blackjack strategies.
 
-You're expected to submit a strategy (in `submitting.py`) that will be evaluated on how much money you make (or lose) over 10000 rounds.
+You're expected to submit a strategy (in `submitting.py`) that will be evaluated on how much money you make (or lose) over 10000 rounds, starting with a bankroll of $10000.
 
-Your strategy is expected to inherit from the `Strategy` class in `core/strategy.py`.
+Your strategy is expected to inherit from the `Strategy` class in `core/strategy.py`. There are two methods you must implement:
 
-There are two methods you must implement:
+1. `def get_bet_size(self, info: PlayerInformation, bankroll: float) -> float:`: 
+    - Determine the amount of money to bet before the round starts. 
+    - You can use `bankroll` to check how much money you have left before betting
+2. `def get_action(self, info: PlayerInformation, possible_actions: List[Action], bankroll: float) -> Action:`: 
+    - Determine the next action for a given hand, these include `HIT`, `STAND`, `DOUBLE`, `SPLIT`.
+    - You can use `possible_actions` to check what actions are valid
+    - You can use `bankroll` to check how much money you have left before deciding to add more (double / split)
 
-- `get_bet_size`: Determine the amount of money to bet before the round starts.
-- `get_action`: Determine the next action for a given hand, these include `HIT`, `STAND`, `DOUBLE`, `SPLIT`.
+For each of these methods, you'll be given a `PlayerInformation` object that contains all current and past information you need to make a decision.
 
-For each of these methods, you'll be given a `PlayerInformation` object that contains all the information you need to make a decision.
+The `PlayerInformation` object contains the following:
 
-The `PlayerInformation` object contains the following information:
-
-- `current_game`: The current game state (e.g. the dealer's visible card and your cards and which turn it is)
+- `current_game`: The current game state (e.g. the dealer's visible card and all of your hands and which turn it is)
 - `game_history`: The history of the game (e.g. all the previous cards that have been dealt before)
-
-You can also use `bankroll` and `possible_actions` to simplify the need to keep track of these internal states yourself.
 
 
 ### Given default strategies
@@ -38,6 +39,7 @@ When the ratio is high, the card counter will bet more because they're more like
 
 When the ratio is low, the card counter will bet less because the house has the advantage.
 
+A card counter will also adjust their actions slightly based on the count, for example, splitting and doubling down more often when the count is high.
 
 ### Running the simulator
 
