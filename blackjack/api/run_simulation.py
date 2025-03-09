@@ -67,8 +67,8 @@ def main():
     starting_bankroll = simulator.bankroll
 
     # Run 100 rounds with verbose output for the first 3 rounds
-    for i in range(100):
-        simulator.run_round(verbose=(i < 20))
+    for i in range(10000):
+        simulator.run_round(verbose=(i < 3))
 
     print("\nFinal Results:")
     print(f"Total rounds played: {simulator.rounds_played}")

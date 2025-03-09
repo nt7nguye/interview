@@ -8,7 +8,7 @@ class SimpleStrategy(Strategy):
 
     def get_bet_size(self, info: PlayerInformation, bankroll: float) -> float:
         # Simple constant bet size - 5% of bankroll with minimum of 10
-        return 10.0
+        return 1.0
 
     def get_action(
         self, info: PlayerInformation, possible_actions: List[Action], bankroll: float

@@ -16,8 +16,10 @@ class BlackjackSimulator:
 
     def run_round(self, verbose: bool = False) -> List[float]:
         """Run a single round of blackjack"""
-        bet = self.player.get_bet_size(
-            self.game.get_player_information(), self.bankroll
+        # Can't bet less than 1.0
+        bet = max(
+            self.player.get_bet_size(self.game.get_player_information(), self.bankroll),
+            1.0,
         )
         # Deduct bankroll
         if self.bankroll < bet:

@@ -10,6 +10,7 @@ class Strategy:
     def get_bet_size(self, state: GameState, bankroll: float) -> float:
         """
         Determine the amount of money to bet before the round starts.
+        Note: The bet size is defaulted to at least 1.0
 
         Args:
             state (GameState): The current game state
