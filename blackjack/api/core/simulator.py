@@ -1,5 +1,5 @@
 from typing import List
-from .game import BlackjackGame
+from game import BlackjackGame
 
 
 class BlackjackSimulator:

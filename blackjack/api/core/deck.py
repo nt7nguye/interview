@@ -1,6 +1,6 @@
 import random
 from typing import List
-from .card import Card, Suit
+from card import Card, Suit
 
 
 class Deck:
@@ -18,4 +18,4 @@ class Deck:
     def draw(self) -> Card:
         if not self.cards:
             raise ValueError("Deck is empty")
-        return self.cards.pop() 
+        return self.cards.pop()

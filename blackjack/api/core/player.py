@@ -1,5 +1,5 @@
 import random
-from .game import GameState, Action
+from game import GameState, Action
 
 
 class RandomPlayer:

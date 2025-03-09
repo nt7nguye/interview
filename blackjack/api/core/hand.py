@@ -1,5 +1,5 @@
 from typing import List
-from .card import Card
+from card import Card
 
 
 class Hand:
@@ -33,4 +33,4 @@ class Hand:
         """Returns the highest non-busting value, or lowest busting value"""
         values = self.possible_values
         non_bust = [v for v in values if v <= 21]
-        return max(non_bust) if non_bust else min(values) 
+        return max(non_bust) if non_bust else min(values)

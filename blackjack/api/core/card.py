@@ -26,4 +26,4 @@ class Card:
     def __str__(self):
         value_map = {1: "A", 11: "J", 12: "Q", 13: "K"}
         value_str = value_map.get(self.value, str(self.value))
-        return f"{value_str}{self.suit.value}" 
+        return f"{value_str}{self.suit.value}"
