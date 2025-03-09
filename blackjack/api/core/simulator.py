@@ -34,8 +34,9 @@ class BlackjackSimulator:
         if verbose:
             print(f"\nRound {self.rounds_played + 1}")
             print(f"Dealer shows: {state.current_game.dealer_hand.cards[0]}")
+            starting_hand = state.current_game.player_hands[0]
             print(
-                f"Player hands: {[str(hand) for hand in state.current_game.player_hands]}"
+                f"Player starting hand: {[str(card) for card in starting_hand.cards]} (Value: {starting_hand.best_value})"
             )
 
         while not round_complete:
