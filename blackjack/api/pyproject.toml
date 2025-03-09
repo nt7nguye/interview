@@ -1,14 +1,6 @@
 [tool.poetry]
 name = "api"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "A blackjack game interview question"
+authors = ["Secoda Engineering <engineering@secoda.co>"]
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
