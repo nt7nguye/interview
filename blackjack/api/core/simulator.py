@@ -13,7 +13,6 @@ class BlackjackSimulator:
         self.bet_size = bet_size
         self.game = BlackjackGame()
         self.rounds_played = 0
-        self.total_won = 0.0
 
     def run_round(self, verbose: bool = False) -> List[float]:
         """Run a single round of blackjack"""
@@ -32,12 +31,15 @@ class BlackjackSimulator:
         round_complete = False
 
         if verbose:
-            print(f"\nRound {self.rounds_played + 1}")
+            print(f"\n========= Round {self.rounds_played + 1} =========")
+            print("=== Start ===")
+            print(f"Bet size: ${bet:.2f}. Starting bankroll: ${self.bankroll:.2f}")
             print(f"Dealer shows: {state.current_game.dealer_hand.cards[0]}")
             starting_hand = state.current_game.player_hands[0]
             print(
                 f"Player starting hand: {[str(card) for card in starting_hand.cards]} (Value: {starting_hand.best_value})"
             )
+            print("=== Actions ===")
 
         while not round_complete:
             current_hand = state.current_game.player_hands[state.current_hand_index]
@@ -62,10 +64,10 @@ class BlackjackSimulator:
 
         payout = self.game.get_player_payout()
         self.bankroll += payout
-        self.total_won += payout
         self.rounds_played += 1
 
         if verbose:
+            print("=== End ===")
             # Show each player hand with its value
             for i, hand in enumerate(self.game.player_hands):
                 print(
@@ -75,6 +77,6 @@ class BlackjackSimulator:
                 f"Dealer's final hand: {[str(card) for card in self.game.dealer_hand.cards]} (Value: {self.game.dealer_hand.best_value})"
             )
             print(f"Round payout: ${payout:.2f}")
-            print(f"Current bankroll: ${self.bankroll:.2f}")
+            print(f"Final bankroll: ${self.bankroll:.2f}")
 
         return payout

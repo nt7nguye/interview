@@ -64,6 +64,7 @@ def main():
     print(f"Starting simulation with {strategy_name} strategy...")
     player = load_player_strategy(strategy_name)
     simulator = BlackjackSimulator(player)
+    starting_bankroll = simulator.bankroll
 
     # Run 100 rounds with verbose output for the first 3 rounds
     for i in range(100):
@@ -72,9 +73,9 @@ def main():
     print("\nFinal Results:")
     print(f"Total rounds played: {simulator.rounds_played}")
     print(f"Final bankroll: ${simulator.bankroll:.2f}")
-    print(f"Total won: ${simulator.total_won:.2f}")
+    print(f"Total won: ${simulator.bankroll - starting_bankroll:.2f}")
     print(
-        f"Average return per round: ${simulator.total_won / simulator.rounds_played:.2f}"
+        f"Average return per round: ${((simulator.bankroll - starting_bankroll) / simulator.rounds_played):.2f}"
     )
 
 
