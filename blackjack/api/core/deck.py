@@ -10,9 +10,6 @@ class Deck:
             for suit in Suit:
                 for value in range(1, 14):
                     self.cards.append(Card(suit, value))
-        self.shuffle()
-
-    def shuffle(self):
         random.shuffle(self.cards)
 
     def draw(self) -> Card:
