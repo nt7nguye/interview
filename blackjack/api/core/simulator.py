@@ -44,6 +44,10 @@ class BlackjackSimulator:
         self.rounds_played += 1
 
         if verbose:
+            # Show each player hand with its value
+            for i, hand in enumerate(self.game.player_hands):
+                print(f"Player hand {i+1}: {[str(card) for card in hand.cards]} (Value: {hand.best_value})")
+            print(f"Dealer's final hand: {[str(card) for card in self.game.dealer_hand.cards]} (Value: {self.game.dealer_hand.best_value})")
             print(f"Round payouts: {payouts}")
             print(f"Total payout: ${total_payout:.2f}")
             print(f"Current bankroll: ${self.bankroll:.2f}")

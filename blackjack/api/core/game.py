@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from .card import Card
 from .hand import Hand
 from .deck import Deck
+import random
 
 
 class Action(Enum):
@@ -35,8 +36,12 @@ class BlackjackGame:
 
     def _ensure_cards_available(self, num_cards_needed: int = 1):
         """Ensure there are enough cards available, reshuffle if needed"""
-        if len(self.deck.cards) < num_cards_needed:
-            print(f"Reshuffling deck. Cards remaining: {len(self.deck.cards)}")
+        total_cards = 52 * self.num_decks
+        # Randomly choose reshuffle point between 40-60% of deck remaining
+        reshuffle_point = total_cards * (0.4 + random.random() * 0.2)
+        
+        if len(self.deck.cards) < reshuffle_point:
+            print(f"Reshuffling deck at {len(self.deck.cards)} cards remaining ({(len(self.deck.cards)/total_cards)*100:.1f}%)")
             self.deck = Deck(self.num_decks)  # Create fresh shuffled deck
 
     def start_round(self, bet: int) -> GameState:
