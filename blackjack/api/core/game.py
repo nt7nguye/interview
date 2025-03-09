@@ -1,5 +1,6 @@
+import copy
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 from dataclasses import dataclass
 from core.card import Card
 from core.hand import Hand
@@ -18,100 +19,72 @@ class Action(Enum):
 class GameState:
     """Represents the visible state of the game to a player"""
 
-    player_hands: List[List[Card]]  # Multiple hands in case of splits
-    dealer_up_card: Optional[Card]
-    current_hand_index: int
-    can_split: bool
-    can_double: bool
+    player_hands: List[List[Card]]
+    # If the game is in progress, the dealer's hand is only the first card
+    # If the game is over, the dealer's hand is complete
+    dealer_hand: List[Card]
 
 
 class BlackjackGame:
     def __init__(self, num_decks: int = 6):
-        self.num_decks = num_decks  # Store number of decks for reshuffling
+        self.num_decks = num_decks
         self.deck = Deck(num_decks)
-        self.player_hands: List[Hand] = []
-        self.dealer_hand: Hand = Hand([])
-        self.current_hand_index: int = 0
-        self.bet_amount: int = 0
 
-    def _ensure_cards_available(self, num_cards_needed: int = 1):
-        """Ensure there are enough cards available, reshuffle if needed"""
+        # Game history of the deck
+        self.game_history: List[GameState] = []
+        self.current_hand_index: int = 0
+
+    def _shuffle_if_needed(self):
         total_cards = 52 * self.num_decks
-        # Randomly choose reshuffle point between 40-60% of deck remaining
-        reshuffle_point = total_cards * (0.4 + random.random() * 0.2)
+
+        # Randomly choose reshuffle point between 60-80% of deck remaining
+        reshuffle_point = total_cards * (0.6 + random.random() * 0.2)
 
         if len(self.deck.cards) < reshuffle_point:
-            print(
-                f"Reshuffling deck at {len(self.deck.cards)} cards remaining ({(len(self.deck.cards) / total_cards) * 100:.1f}%)"
-            )
-            self.deck = Deck(self.num_decks)  # Create fresh shuffled deck
+            # Create fresh shuffled deck
+            self.deck = Deck(self.num_decks)
+            # Reset game history
+            self.game_history = []
 
-    def start_round(self, bet: int) -> GameState:
+    def start_round(self, bet_size: int) -> GameState:
         """Start a new round with the given bet"""
-        # Need 4 cards to start a round (2 for player, 2 for dealer)
-        self._ensure_cards_available(4)
-
-        self.bet_amount = bet
-        self.player_hands = [Hand([self.deck.draw(), self.deck.draw()])]
-        self.dealer_hand = Hand([self.deck.draw(), self.deck.draw()])
+        self._shuffle_if_needed()
+        self.player_hands = [Hand([self.deck.draw(), self.deck.draw()], bet_size)]
+        self.dealer_hand = Hand([self.deck.draw(), self.deck.draw()], 0)
         self.current_hand_index = 0
         return self._get_game_state()
 
     def _get_game_state(self) -> GameState:
         """Create a GameState object representing current state"""
-        # Check if we've completed all hands
-        if self.current_hand_index >= len(self.player_hands):
-            return GameState(
-                player_hands=[hand.cards for hand in self.player_hands],
-                dealer_up_card=self.dealer_hand.cards[0],
-                current_hand_index=len(self.player_hands) - 1,  # Return last hand index
-                can_split=False,
-                can_double=False,
-            )
-
-        current_hand = self.player_hands[self.current_hand_index]
-        can_split = (
-            len(current_hand.cards) == 2
-            and current_hand.cards[0].blackjack_value
-            == current_hand.cards[1].blackjack_value
-            and len(self.player_hands) < 4  # Limit splits to 3 times
-        )
-        can_double = len(current_hand.cards) == 2
-
         return GameState(
-            player_hands=[hand.cards for hand in self.player_hands],
-            dealer_up_card=self.dealer_hand.cards[0],
-            current_hand_index=self.current_hand_index,
-            can_split=can_split,
-            can_double=can_double,
+            player_hands=[copy.deepcopy(hand.cards) for hand in self.player_hands],
+            dealer_hand=copy.deepcopy(self.dealer_hand.cards),
         )
 
     def apply_action(self, action: Action) -> Tuple[GameState, bool]:
         """Apply player action and return (new_state, is_round_complete)"""
-        self._ensure_cards_available()  # Ensure at least one card is available
         current_hand = self.player_hands[self.current_hand_index]
 
         if action == Action.HIT:
+            if not current_hand.can_hit:
+                raise ValueError(f"Cannot hit on hand {current_hand}")
             current_hand.cards.append(self.deck.draw())
             if current_hand.is_bust:
                 return self._next_hand()
 
         elif action == Action.STAND:
-            current_hand.stood = True
             return self._next_hand()
 
         elif action == Action.DOUBLE:
-            if len(current_hand.cards) != 2:
-                raise ValueError("Can only double on first two cards")
+            if not current_hand.can_double:
+                raise ValueError(f"Cannot double on hand {current_hand}")
             current_hand.cards.append(self.deck.draw())
-            current_hand.doubled = True
+            current_hand.bet_amount *= 2
             return self._next_hand()
 
         elif action == Action.SPLIT:
-            # Need 2 cards for split (1 for each hand)
-            self._ensure_cards_available(2)
-            if not self._get_game_state().can_split:
-                raise ValueError("Split not allowed")
+            if not current_hand.can_split:
+                raise ValueError(f"Cannot split on hand {current_hand}")
             new_hand = Hand([current_hand.cards.pop()])
             current_hand.cards.append(self.deck.draw())
             new_hand.cards.append(self.deck.draw())
@@ -132,7 +105,13 @@ class BlackjackGame:
     def _play_dealer(self):
         """Play out dealer's hand according to rules"""
         while self.dealer_hand.best_value < 17:
-            self._ensure_cards_available()  # Add this check
+            self.dealer_hand.cards.append(self.deck.draw())
+
+        # Dealer must hit if they have a soft 17
+        if (
+            self.dealer_hand.best_value == 17
+            and min(self.dealer_hand.possible_values) < 17
+        ):
             self.dealer_hand.cards.append(self.deck.draw())
 
     def get_payouts(self) -> List[float]:
@@ -154,8 +133,4 @@ class BlackjackGame:
                     payouts.append(-1)
                 else:
                     payouts.append(0)  # Push
-
-            if hand.doubled:
-                payouts[-1] *= 2
-
         return payouts
