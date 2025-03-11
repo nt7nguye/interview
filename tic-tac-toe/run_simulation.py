@@ -1,5 +1,6 @@
 import sys
-from board import TicTacToeGame, Piece
+import copy
+from board import TicTacToeGame
 from computer_strategy import TicTacToeStrategy as ComputerStrategy
 from human_strategy import TicTacToeStrategy as HumanStrategy
 
@@ -19,7 +20,7 @@ def main():
     for i in range(3):
         for j in range(3):
             game = TicTacToeGame()
-            game.board[i][j] = Piece.X
+            game.board[i][j] = computer.piece
 
             if verbose:
                 print("Starting board:")
@@ -29,28 +30,28 @@ def main():
             while not game.is_over():
                 # Human move
                 if turn % 2 == 1:
-                    move = human.get_move(game.board)
-                    game.apply_move(move, Piece.O)
+                    move = human.get_move(copy.deepcopy(game.board))
+                    game.apply_move(move, human.piece)
                 else:
-                    move = computer.get_move(game.board)
-                    game.apply_move(move, Piece.X)
+                    move = computer.get_move(copy.deepcopy(game.board))
+                    game.apply_move(move, computer.piece)
                 if verbose:
                     print(f"Turn {turn}:")
                     print(game)
                 turn += 1
 
-            if game.get_winner() == Piece.O:
+            if game.get_winner() == human.piece:
                 won += 1
                 if verbose:
-                    print("Human wins!", game)
-            elif game.get_winner() == Piece.X:
+                    print("Human wins!\n", game)
+            elif game.get_winner() == computer.piece:
                 lost += 1
                 if verbose:
-                    print("Computer wins!", game)
+                    print("Computer wins!\n", game)
             else:
                 tied += 1
                 if verbose:
-                    print("Tie!", game)
+                    print("Tie!\n", game)
 
     # Given the human goes first
     game = TicTacToeGame()
@@ -60,25 +61,31 @@ def main():
         print(game)
     while not game.is_over():
         if turn % 2 == 0:
-            move = human.get_move(game.board)
-            game.apply_move(move, Piece.O)
+            move = human.get_move(copy.deepcopy(game.board))
+            game.apply_move(move, human.piece)
             if verbose:
                 print(f"Turn {turn}:")
                 print(game)
         else:
-            move = computer.get_move(game.board)
-            game.apply_move(move, Piece.X)
+            move = computer.get_move(copy.deepcopy(game.board))
+            game.apply_move(move, computer.piece)
             if verbose:
                 print(f"Turn {turn}:")
                 print(game)
         turn += 1
 
-    if game.get_winner() == Piece.X:
+    if game.get_winner() == computer.piece:
         won += 1
-    elif game.get_winner() == Piece.O:
+        if verbose:
+            print("Computer wins!\n", game)
+    elif game.get_winner() == human.piece:
         lost += 1
+        if verbose:
+            print("Human wins!\n", game)
     else:
         tied += 1
+        if verbose:
+            print("Tie!\n", game)
 
     # Print results
     print(f"Won: {won}, Lost: {lost}, Tied: {tied}")

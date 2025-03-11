@@ -3,7 +3,9 @@ from board import Piece
 
 
 class TicTacToeStrategy:
-    def __init__(self):
+    def __init__(self, piece: Piece = Piece.O, opponent_piece: Piece = Piece.X):
+        self.piece = piece
+        self.opponent_piece = opponent_piece
         pass
 
     def get_move(self, board: List[List[Piece]]) -> Tuple[int, int]:
