@@ -65,7 +65,7 @@ def run_game(verbose: bool,
                 game.apply_move(move, human.piece)
             except Exception:
                 if verbose:
-                    print("Invalid move, computer wins!")
+                    print(f"Invalid move {move}, computer wins!")
                 return computer.piece
         else:
             move = computer.get_move(copy.deepcopy(game.board))

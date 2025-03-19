@@ -46,7 +46,6 @@ class TicTacToeStrategy:
         return possible_winning_moves > 2
 
     def get_move(self, board: List[List[Piece]]) -> Tuple[int, int]:
-        """Implement your strategy here"""
         # If winning move, take it
         for i in range(3):
             for j in range(3):
