@@ -1,10 +1,14 @@
 from typing import List, Tuple
 from board import Piece
 
+
 class TicTacToeStrategy:
-    def __init__(self, piece: Piece = Piece.O, opponent_piece: Piece = Piece.X):
+    def __init__(
+        self, piece: Piece = Piece.O, opponent_piece: Piece = Piece.X, opponent=None
+    ):
         self.piece = piece
         self.opponent_piece = opponent_piece
+        self.opponent = opponent
 
     def _check_winning_move(
         self, board: List[List[Piece]], move: Tuple[int, int], piece: Piece
@@ -31,7 +35,9 @@ class TicTacToeStrategy:
     def get_move(self, board: List[List[Piece]]) -> Tuple[int, int]:
         """Implement your strategy here"""
 
-        board_dict = {(x,y):4 for x in range(3) for y in range(3)} # cell:scenario (0,1,2,3)
+        board_dict = {
+            (x, y): 4 for x in range(3) for y in range(3)
+        }  # cell:scenario (0,1,2,3)
 
         # check if opponent has winning moves to block
         for i in range(3):
@@ -40,30 +46,28 @@ class TicTacToeStrategy:
                     if self._check_winning_move(board, (i, j), self.opponent_piece):
                         return (i, j)
 
-        # take center if open, regardless of 
+        # take center if open, regardless of
         if board[1][1] == Piece.EMPTY:
-            return (1,1)
-        
+            return (1, 1)
+
         def cell_bfs(cell_x, cell_y) -> None:
             """
             given a cell, traverse around it and return first empty cell
             otherwise, return (-1,-1)
             """
 
-            directions = [(-1, 0), (1, 0), (0,1), (0,-1), (-1,-1), (1,1)]
+            directions = [(-1, 0), (1, 0), (0, 1), (0, -1), (-1, -1), (1, 1)]
 
             for dx, dy in directions:
                 adj_x, adj_y = cell_x + dx, cell_y + dy
 
-                if (adj_x < 0 or adj_x > 2 
-                    or adj_y < 0 or adj_y > 2):
-
+                if adj_x < 0 or adj_x > 2 or adj_y < 0 or adj_y > 2:
                     return False
-                
-                if (board[adj_x][adj_y] == self.piece):
+
+                if board[adj_x][adj_y] == self.piece:
                     board_dict[(cell_x, cell_y)] = 1
-            
-                if (board[adj_x][adj_y] == Piece.X):
+
+                if board[adj_x][adj_y] == self.opponent_piece:
                     board_dict[(cell_x, cell_y)] = 2
 
                 board_dict[(cell_x, cell_y)] = 3
@@ -74,13 +78,10 @@ class TicTacToeStrategy:
                 if board[i][j] == Piece.EMPTY:
                     cell_bfs(i, j)
 
-
         # loop through board dict, return lowest non-zero zero value
-        min_cell = (0,0)
+        min_cell = (0, 0)
         for cell in board_dict:
             if board_dict[cell] < board_dict[min_cell]:
                 min_cell = cell
 
-
         return min_cell
-
