@@ -11,7 +11,9 @@ def main():
 
     for file in os.listdir(os.path.join(os.path.dirname(__file__), "submissions")):
         if file.endswith(".py") and not file.startswith("__"):
-            players.append(file[:-3])
+            player_module = importlib.import_module(f"submissions.{file[:-3]}")
+            if "TicTacToeStrategy" in dir(player_module):
+                players.append(file[:-3])
 
     # Elo rating {submission_id: elo}
     # TODO: Maybe not match players that are too different in ratings ?
