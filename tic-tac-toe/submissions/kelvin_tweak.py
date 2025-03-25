@@ -3,10 +3,11 @@ from board import Piece
 
 
 class TicTacToeStrategy:
-    def __init__(self, piece: Piece = Piece.O, opponent_piece: Piece = Piece.X, opponent=None):
+    def __init__(
+        self, piece: Piece = Piece.O, opponent_piece: Piece = Piece.X, opponent=None
+    ):
         self.piece = piece
         self.opponent_piece = opponent_piece
-        pass
 
     def _check_winning_move(
         self, board: List[List[Piece]], move: Tuple[int, int], piece: Piece

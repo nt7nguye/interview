@@ -9,7 +9,7 @@ class TicTacToeStrategy:
         self,
         piece: Piece = Piece.O,
         opponent_piece: Piece = Piece.X,
-        opponent=Opponent,
+        opponent=None,
     ):
         self.piece = piece
         self.opponent_piece = opponent_piece
@@ -69,7 +69,7 @@ class TicTacToeStrategy:
         else:
             best_score = float("inf")
             board_copy = copy.deepcopy(board)
-            computer_strategy = self.opponent(self.opponent_piece, self.piece)
+            computer_strategy = self.opponent
             computer_move = computer_strategy.get_move(board_copy)
             board[computer_move[0]][computer_move[1]] = self.opponent_piece
             score, _ = self.minimax(board, depth + 1, True)

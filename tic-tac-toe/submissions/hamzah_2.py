@@ -8,7 +8,6 @@ class TicTacToeStrategy:
     ):
         self.piece = piece
         self.opponent_piece = opponent_piece
-        self.opponent = opponent
 
     def _check_winning_move(
         self, board: List[List[Piece]], move: Tuple[int, int], piece: Piece

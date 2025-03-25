@@ -9,11 +9,10 @@ class TicTacToeStrategy:
         self,
         piece: Piece = Piece.O,
         opponent_piece: Piece = Piece.X,
-        opponent=Opponent,
+        opponent=None,
     ):
         self.piece = piece
         self.opponent_piece = opponent_piece
-        self.opponent = opponent
         pass
 
     def _check_winning_move(

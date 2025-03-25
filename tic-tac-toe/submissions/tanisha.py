@@ -4,15 +4,16 @@ from computer_strategy import TicTacToeStrategy as Opponent
 
 
 class TicTacToeStrategy:
+    # Mocked opponent instance
     def __init__(
         self,
         piece: Piece = Piece.O,
         opponent_piece: Piece = Piece.X,
-        opponent_class=Opponent,
+        opponent=None,
     ):
         self.piece = piece
         self.opponent_piece = opponent_piece
-        self.opponent_class = opponent_class
+        self.opponent = opponent
         pass
 
     def check_winner(self, board: List[List[Piece]]) -> Piece:
@@ -56,24 +57,24 @@ class TicTacToeStrategy:
         return False
 
     def get_move(self, board: List[List[Piece]]) -> Tuple[int, int]:
-        comp = self.opponent_class()
+        comp = self.opponent
         possible_randoms = []
         """Implement your strategy here"""
         try:
             for i in range(3):
                 for j in range(3):
                     if board[i][j] == Piece.EMPTY:
-                        board[i][j] = Piece.O
+                        board[i][j] = self.piece
                         a, b = comp.get_move(board=board)
-                        board[a][b] = Piece.X
+                        board[a][b] = self.opponent_piece
 
                         # if this gives me a winning move, undo simulation, make this move
                         winner = self.check_winner(board=board)
                         board[i][j] = Piece.EMPTY
                         board[a][b] = Piece.EMPTY
-                        if winner == Piece.O:
+                        if winner == self.piece:
                             return (i, j)
-                        elif winner == Piece.X:
+                        elif winner == self.opponent_piece:
                             continue
                         else:
                             possible_randoms.append((i, j))

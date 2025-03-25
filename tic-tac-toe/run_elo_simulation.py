@@ -3,6 +3,8 @@ import os
 import random
 import sys
 import copy
+import traceback
+from tty import setcbreak
 from board import Piece, TicTacToeGame
 
 
@@ -36,13 +38,18 @@ def main():
         player_class = load_player_class(player)
         other_player_class = load_player_class(other_player)
 
-        first_player = player_class(Piece.X, Piece.O, other_player_class)
-        second_player = player_class(
-            Piece.O,
-            Piece.X,
-        )
+        # This is ugly but avoid infinite recursion for now
+        first_player = player_class(Piece.X, Piece.O)
+        second_player = other_player_class(Piece.O, Piece.X)
+        first_player.opponent = second_player
+        second_player.opponent = first_player
 
-        result = run_game(first_player, second_player)
+        try:
+            result = run_game(first_player, second_player, i, player, other_player)
+        except Exception as e:
+            print(f"Error: Game {i}, {player} vs {other_player}, {e}")
+            print(traceback.format_exc())
+            continue
 
         expected_score_first = 1 / (
             1 + 10 ** ((player_elo[other_player] - player_elo[player]) / 400)
@@ -73,21 +80,38 @@ def load_player_class(player_name):
         sys.exit(1)
 
 
-def run_game(first, second):
+def run_game(first, second, i, player, other_player):
     game = TicTacToeGame()
     turn = 0
 
     while not game.is_over():
         # Human move
         if turn % 2 == 0:
-            move = first.get_move(copy.deepcopy(game.board))
             try:
+                move = first.get_move(copy.deepcopy(game.board))
+                # No move is automatically a loss
+                if move is None:
+                    return 0
                 game.apply_move(move, first.piece)
-            except Exception:
+            except Exception as e:
+                print(
+                    f"Error in first player get_move: Game {i}, {player} vs {other_player}, {e}"
+                )
+                print(traceback.format_exc())
                 return 0
         else:
-            move = second.get_move(copy.deepcopy(game.board))
-            game.apply_move(move, second.piece)
+            try:
+                move = second.get_move(copy.deepcopy(game.board))
+                # No move is automatically a win
+                if move is None:
+                    return 1
+                game.apply_move(move, second.piece)
+            except Exception as e:
+                print(
+                    f"Error in second player get_move: Game {i}, {player} vs {other_player}, {e}"
+                )
+                print(traceback.format_exc())
+                return 1
         turn += 1
 
     if game.get_winner() == first.piece:
