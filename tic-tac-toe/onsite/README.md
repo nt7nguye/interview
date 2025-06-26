@@ -2,7 +2,9 @@
 
 This is a simple implementation of Tic Tac Toe in Python. 
 
-You're expected to implement the `HumanStrategy` class. Specifically, you're expected to implement the `get_move` method that returns your next move based on the current board state.
+You're expected to implement the `TicTacToeStrategy` class inside `human_strategy.py`. 
+
+Specifically, you're expected to implement the `get_move` method that returns your next move based on the current board state.
 
 The board is a 3x3 grid, represented as a list of lists `(List[List[Piece]])`. Each piece is either `Piece.X`, `Piece.O`, or `Piece.EMPTY`. 
 
@@ -15,7 +17,7 @@ Also provided is a `ComputerStrategy` class that you can use to benchmark your s
 ### Expectations
 
 - Time complexity and Big O does not matter as long as your program runs in a reasonable amount of time. 
-- You can use any libraries and algorithmsyou want.
+- You can use any libraries and algorithms you want.
 - You can use Google Search and Stack Overflow.
 - You can make 3rd party API calls (including to Claude) if you want.
 
