@@ -43,7 +43,7 @@ class TicTacToeStrategy:
                     if self._check_winning_move(board, (i, j), piece):
                         possible_winning_moves += 1
         board[move[0]][move[1]] = Piece.EMPTY
-        return possible_winning_moves > 2
+        return possible_winning_moves >= 2
 
     def get_move(self, board: List[List[Piece]]) -> Tuple[int, int]:
         # If winning move, take it

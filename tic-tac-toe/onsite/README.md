@@ -17,8 +17,11 @@ Also provided is a `ComputerStrategy` class that you can use to benchmark your s
 ### Expectations
 
 - Time complexity and Big O does not matter as long as your program runs in a reasonable amount of time. 
+
 - You can use any libraries and algorithms you want.
+
 - You can use Google Search and Stack Overflow.
+
 - You can make 3rd party API calls (including to Claude) if you want.
 
 ### Running the simulation
